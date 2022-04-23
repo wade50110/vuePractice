@@ -34,7 +34,7 @@ const router = new Router({
           meta: {
             requireAuth: true,
             allowRoles: [
-              'ROLE_HR_STAFF'
+              'HR_STAFF'
             ]
           }
         }
@@ -57,19 +57,18 @@ router.beforeEach((to, from, next) => {
       .then((successResponse) => {
         let allow = false
         for (var i = 0; i < to.meta.allowRoles.length; i++) {
-          if (to.meta.allowRoles[i] === successResponse.data.user_type) {
-            allow = true
+          for (var j = 0; j < successResponse.data.user_type.length; j++) {
+            if (to.meta.allowRoles[i] === successResponse.data.user_type[j]) {
+              allow = true
+            }
           }
-        }
-
-        if (to.meta.allowRoles.length === 0) {
-          allow = true
         }
 
         if (allow) {
           next()
         } else {
           next('/login')
+          alert('權限不足')
         }
       })
       .catch((failResponse) => {
